@@ -15,11 +15,12 @@ public class sym {
   public static final int ERROR = 19;
   public static final int COLOR = 18;
   public static final int PA2 = 13;
+  public static final int CUADRADO = 20;
   public static final int PA1 = 12;
   public static final int OBJETO = 6;
   public static final int GRAFICAR = 2;
   public static final int COMA = 14;
-  public static final int NUMBER = 20;
+  public static final int NUMBER = 21;
   public static final int EOF = 0;
   public static final int MULT = 10;
   public static final int DIV = 11;
@@ -30,27 +31,28 @@ public class sym {
   public static final int RECTANGULO = 16;
   public static final int RESTA = 9;
   public static final String[] terminalNames = new String[] {
-  "EOF",
-  "error",
-  "GRAFICAR",
-  "LINEA",
-  "CURVA",
-  "ANIMAR",
-  "OBJETO",
-  "ANTERIOR",
-  "SUMA",
-  "RESTA",
-  "MULT",
-  "DIV",
-  "PA1",
-  "PA2",
-  "COMA",
-  "CIRCULO",
-  "RECTANGULO",
-  "POLIGONO",
-  "COLOR",
-  "ERROR",
-  "NUMBER"
+          "EOF",
+          "error",
+          "GRAFICAR",
+          "LINEA",
+          "CURVA",
+          "ANIMAR",
+          "OBJETO",
+          "ANTERIOR",
+          "SUMA",
+          "RESTA",
+          "MULT",
+          "DIV",
+          "PA1",
+          "PA2",
+          "COMA",
+          "CIRCULO",
+          "RECTANGULO",
+          "POLIGONO",
+          "COLOR",
+          "ERROR",
+          "CUADRADO",
+          "NUMBER"
   };
 }
 

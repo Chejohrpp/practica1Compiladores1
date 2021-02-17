@@ -1,4 +1,4 @@
-package source;
+package com.example.practica1.source;
 import java_cup.runtime.*;
 import com.example.practica1.source.sym.*;
 import com.example.practica1.source.objetos.*;
@@ -12,7 +12,7 @@ parser code{:
 	private List<ManejadorFigura> manejadorFigura;
 	private List<ManejadorErrores>manejadorError;
 
-	public  parser(LexicoGraph lex){
+	public parser(LexicoGraph lex){
 		super(lex);
 		this.manejadorFigura = new ArrayList();
 		this.manejadorError = new ArrayList();
