@@ -7,6 +7,9 @@ import android.widget.EditText;
 import android.view.Menu;
 
 
+import com.example.practica1.source.LexicoGraph;
+import com.example.practica1.source.ManejadorFigura;
+import com.example.practica1.source.parser;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -19,10 +22,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.io.Serializable;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    public static final String EXTRA_MESSAGE = "com.example.practica1.MESSAGE";
+   //public static final String EXTRA_MESSAGE = "com.example.practica1.MESSAGE";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +63,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         EditText editText = (EditText) findViewById(R.id.editTextTextPersonName);
         String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra("mensaje",message);
         startActivity(intent);
+
+
+
+
+
     }
 
     @Override
