@@ -2,14 +2,18 @@
     <string name="app_name">Practica1</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Reportes</string>
+    <string name="nav_header_subtitle">Creacion y Animacion de Figuras Geometricas</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_home">Colores usados</string>
+    <string name="menu_gallery">Figuras usadas</string>
+    <string name="menu_slideshow">Errores</string>
     <string name="edit_message">Escribe tus acciones</string>
     <string name="button_send">Compilar</string>
+    <string name="report_ocurrencias">Ocurrencias de operadores aritmeticos</string>
+    <string name="report_animacion">Animaciones realizadas</string>
+    <string name="abrirDrawe">abrimos el drawer</string>
+    <string name="cerrarDrawer">cerramos el drawer</string>
 </resources>

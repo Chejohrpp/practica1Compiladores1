@@ -4,18 +4,22 @@ import com.example.practica1.source.sym.*;
 import com.example.practica1.source.objetos.*;
 import java.util.ArrayList;
 import java.util.List;
-import com.example.practica1.source.reportes.ManejadorErrores;
+import com.example.practica1.source.reportes.*;
+import java.text.DecimalFormat;
 
 parser code{:
 
 	private int id =0;
 	private List<ManejadorFigura> manejadorFigura;
 	private List<ManejadorErrores>manejadorError;
+	private DecimalFormat df = new DecimalFormat("#.00");
+	private List<ReportOcurrencias>reportOcu;
 
 	public parser(LexicoGraph lex){
 		super(lex);
 		this.manejadorFigura = new ArrayList();
 		this.manejadorError = new ArrayList();
+		this.reportOcu = new ArrayList();
 	}
 
 	public void syntax_error(Symbol cur_token){
@@ -34,10 +38,15 @@ parser code{:
 	private Double conDob(String s){
 		return Double.parseDouble(s);
 	}
-
+	public List getReportOcurrencia(){
+		return reportOcu;
+	}
 	public List getManejadorFigura(){
 		return manejadorFigura;
 	}
+	public List getManejadorErrores(){
+    		return manejadorError;
+    	}
 	private String[] addMF(Object var){
 		String s =(String)var;
 		String[] ps=s.split("\\|");		
@@ -71,7 +80,9 @@ parser code{:
     	}
 :}
 
-terminal GRAFICAR,LINEA,CURVA,ANIMAR,OBJETO,ANTERIOR,SUMA,RESTA,MULT,DIV,PA1,PA2,COMA,CIRCULO,RECTANGULO,POLIGONO,COLOR,ERROR,CUADRADO;
+terminal GRAFICAR,LINEA,CURVA,ANIMAR,OBJETO,ANTERIOR;
+terminal Token SUMA,RESTA,MULT,DIV,PA1,PA2;
+terminal COMA,CIRCULO,RECTANGULO,POLIGONO,COLOR,ERROR,CUADRADO;
 terminal String NUMBER;
 
 non terminal star,fig,obj,expr_all,anim,fin_pa,one_exp,two_exp,tip_an;
@@ -114,12 +125,20 @@ expr_all ::= expr_all expr:e          {: RESULT = e; :}
             | expr:e                  {: RESULT = e; :}
 			;
 
-expr      ::= expr:e1 SUMA  expr:e2         {: RESULT = e1+e2;       :}
-             | expr:e1 RESTA expr:e2        {: RESULT = e1-e2;       :}
-             | expr:e1 MULT expr:e2       	{: RESULT = e1*e2;       :}
-             | expr:e1 DIV expr:e2        	{: RESULT = e1/e2;       :}
-             | RESTA expr:e                 {: RESULT = -e;          :}
-       		| PA1 expr:e PA2	         	{: RESULT = e;           :}
+expr      ::= expr:e1 SUMA:s  expr:e2         {:  
+											reportOcu.add(new ReportOcurrencias("SUMA",s.getLinea(),s.getColumna(), df.format(e1) + "+" + df.format(e2))) ;
+											RESULT = e1+e2;       :}
+             | expr:e1 RESTA:s expr:e2        {: reportOcu.add(new ReportOcurrencias("RESTA",s.getLinea(),s.getColumna(), df.format(e1) + "-" + df.format(e2))) ;
+             								RESULT = e1-e2;       :}
+             | expr:e1 MULT:s expr:e2       	{: reportOcu.add(new ReportOcurrencias("MULTIPLICACION",s.getLinea(),s.getColumna(), df.format(e1) + "*" + df.format(e2))) ; 
+             								RESULT = e1*e2;       :}
+             | expr:e1 DIV:s expr:e2        	{:reportOcu.add(new ReportOcurrencias("DIVISION",s.getLinea(),s.getColumna(), df.format(e1) + "/" + df.format(e2))) ; 
+             								RESULT = e1/e2;       :}
+             | RESTA:s expr:e                 {:reportOcu.add(new ReportOcurrencias("RESTA",s.getLinea(),s.getColumna(), "-" + df.format(e))) ; 
+             								RESULT = -e;          :}
+       		| PA1:s expr:e PA2:s1         	{:reportOcu.add(new ReportOcurrencias("PARENTESIS IZQUIERDO",s.getLinea(),s.getColumna(), "( " + df.format(e))) ;
+       										 reportOcu.add(new ReportOcurrencias("PARENTESIS DERECHO",s1.getLinea(),s1.getColumna(), df.format(e) + " )" )) ;
+       										RESULT = e;           :}
        		| NUMBER:n	                    {: RESULT = Double.parseDouble(n);   :}
        		|error
              ;

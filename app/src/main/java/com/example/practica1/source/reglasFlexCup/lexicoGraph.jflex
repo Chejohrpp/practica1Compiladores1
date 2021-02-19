@@ -39,12 +39,12 @@ whiteSpace     = {lineTerminator} | [ \t\f]
 
 
 /*simbolos de operaciones*/
-<YYINITIAL> "+"	{return   new Symbol(SUMA,yyline+1,yycolumn+1);}
-<YYINITIAL> "-"	{return   new Symbol(RESTA,yyline+1,yycolumn+1);}
-<YYINITIAL> "*"	{return  new Symbol(MULT,yyline+1,yycolumn+1);}
-<YYINITIAL> "/"	{return   new Symbol(DIV,yyline+1,yycolumn+1);}
-<YYINITIAL> "("	{return   new Symbol(PA1,yyline+1,yycolumn+1);}
-<YYINITIAL> ")"	{return  new Symbol(PA2,yyline+1,yycolumn+1);}
+<YYINITIAL> "+"	{return   new Symbol(SUMA,yyline+1,yycolumn+1, new Token(yyline+1,yycolumn+1));}
+<YYINITIAL> "-"	{return   new Symbol(RESTA,yyline+1,yycolumn+1,new Token(yyline+1,yycolumn+1));}
+<YYINITIAL> "*"	{return  new Symbol(MULT,yyline+1,yycolumn+1,new Token(yyline+1,yycolumn+1));}
+<YYINITIAL> "/"	{return   new Symbol(DIV,yyline+1,yycolumn+1,new Token(yyline+1,yycolumn+1));}
+<YYINITIAL> "("	{return   new Symbol(PA1,yyline+1,yycolumn+1,new Token(yyline+1,yycolumn+1));}
+<YYINITIAL> ")"	{return  new Symbol(PA2,yyline+1,yycolumn+1,new Token(yyline+1,yycolumn+1));}
 
 /*simbolo*/
 <YYINITIAL> ","	{return   new Symbol(COMA,yyline+1,yycolumn+1);}

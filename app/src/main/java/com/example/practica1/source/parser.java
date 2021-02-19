@@ -10,7 +10,8 @@ import com.example.practica1.source.sym.*;
 import com.example.practica1.source.objetos.*;
 import java.util.ArrayList;
 import java.util.List;
-import com.example.practica1.source.reportes.ManejadorErrores;
+import com.example.practica1.source.reportes.*;
+import java.text.DecimalFormat;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -209,11 +210,14 @@ public class parser extends java_cup.runtime.lr_parser {
     private int id =0;
     private List<ManejadorFigura> manejadorFigura;
     private List<ManejadorErrores>manejadorError;
+    private DecimalFormat df = new DecimalFormat("#.00");
+    private List<ReportOcurrencias>reportOcu;
 
     public parser(LexicoGraph lex){
         super(lex);
         this.manejadorFigura = new ArrayList();
         this.manejadorError = new ArrayList();
+        this.reportOcu = new ArrayList();
     }
 
     public void syntax_error(Symbol cur_token){
@@ -232,9 +236,14 @@ public class parser extends java_cup.runtime.lr_parser {
     private Double conDob(String s){
         return Double.parseDouble(s);
     }
-
+    public List getReportOcurrencia(){
+        return reportOcu;
+    }
     public List getManejadorFigura(){
         return manejadorFigura;
+    }
+    public List getManejadorErrores(){
+        return manejadorError;
     }
     private String[] addMF(Object var){
         String s =(String)var;
@@ -545,9 +554,14 @@ public class parser extends java_cup.runtime.lr_parser {
                     int e1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
                     int e1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
                     Double e1 = (Double)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
+                    int sleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+                    int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+                    Token s = (Token)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
                     int e2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
                     int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
                     Double e2 = (Double)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+
+                    reportOcu.add(new ReportOcurrencias("SUMA",s.getLinea(),s.getColumna(), df.format(e1) + "+" + df.format(e2))) ;
                     RESULT = e1+e2;
                     CUP$parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
                 }
@@ -560,9 +574,13 @@ public class parser extends java_cup.runtime.lr_parser {
                     int e1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
                     int e1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
                     Double e1 = (Double)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
+                    int sleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+                    int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+                    Token s = (Token)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
                     int e2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
                     int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
                     Double e2 = (Double)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+                    reportOcu.add(new ReportOcurrencias("RESTA",s.getLinea(),s.getColumna(), df.format(e1) + "-" + df.format(e2))) ;
                     RESULT = e1-e2;
                     CUP$parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
                 }
@@ -575,9 +593,13 @@ public class parser extends java_cup.runtime.lr_parser {
                     int e1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
                     int e1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
                     Double e1 = (Double)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
+                    int sleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+                    int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+                    Token s = (Token)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
                     int e2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
                     int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
                     Double e2 = (Double)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+                    reportOcu.add(new ReportOcurrencias("MULTIPLICACION",s.getLinea(),s.getColumna(), df.format(e1) + "*" + df.format(e2))) ;
                     RESULT = e1*e2;
                     CUP$parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
                 }
@@ -590,9 +612,13 @@ public class parser extends java_cup.runtime.lr_parser {
                     int e1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
                     int e1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
                     Double e1 = (Double)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
+                    int sleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+                    int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+                    Token s = (Token)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
                     int e2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
                     int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
                     Double e2 = (Double)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+                    reportOcu.add(new ReportOcurrencias("DIVISION",s.getLinea(),s.getColumna(), df.format(e1) + "/" + df.format(e2))) ;
                     RESULT = e1/e2;
                     CUP$parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
                 }
@@ -602,9 +628,13 @@ public class parser extends java_cup.runtime.lr_parser {
                 case 25: // expr ::= RESTA expr
                 {
                     Double RESULT =null;
+                    int sleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+                    int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+                    Token s = (Token)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
                     int eleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
                     int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
                     Double e = (Double)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+                    reportOcu.add(new ReportOcurrencias("RESTA",s.getLinea(),s.getColumna(), "-" + df.format(e))) ;
                     RESULT = -e;
                     CUP$parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
                 }
@@ -614,9 +644,17 @@ public class parser extends java_cup.runtime.lr_parser {
                 case 26: // expr ::= PA1 expr PA2
                 {
                     Double RESULT =null;
+                    int sleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
+                    int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
+                    Token s = (Token)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
                     int eleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
                     int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
                     Double e = (Double)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+                    int s1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+                    int s1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+                    Token s1 = (Token)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+                    reportOcu.add(new ReportOcurrencias("PARENTESIS IZQUIERDO",s.getLinea(),s.getColumna(), "( " + df.format(e))) ;
+                    reportOcu.add(new ReportOcurrencias("PARENTESIS DERECHO",s1.getLinea(),s1.getColumna(), df.format(e) + " )" )) ;
                     RESULT = e;
                     CUP$parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
                 }
