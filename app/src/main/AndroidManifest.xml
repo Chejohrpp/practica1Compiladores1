@@ -9,7 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Practica1">
-        <activity android:name=".VistaOcurrencias"></activity>
+        <activity android:name=".VistaColores"
+            android:label="@string/colores_usados"></activity>
+        <activity android:name=".VistaFiguras"
+        android:label="@string/figuras_usadas"></activity>
+        <activity android:name=".VistaErrores"
+            android:label="@string/errores"></activity>
+        <activity android:name=".VistaOcurrencias"
+            android:label="@string/report_ocurrencia_short"></activity>
+        <activity android:name=".VistaAnimaciones"
+            android:label="@string/report_animacion"></activity>
         <activity
             android:name=".DisplayMessageActivity"
             android:label="@string/app_name"

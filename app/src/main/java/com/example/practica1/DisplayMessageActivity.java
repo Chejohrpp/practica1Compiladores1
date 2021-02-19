@@ -16,9 +16,12 @@ import androidx.navigation.ui.NavigationUI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 
@@ -27,8 +30,8 @@ import com.example.practica1.source.ManejadorFigura;
 import com.example.practica1.source.parser;
 import com.example.practica1.source.reportes.ManejadorErrores;
 import com.example.practica1.source.reportes.ReportOcurrencias;
+import com.example.practica1.source.reportes.ReportTipoCant;
 import com.example.practica1.ui.PaintFigures;
-import com.example.practica1.ui.home.HomeFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.Serializable;
@@ -40,13 +43,22 @@ public class DisplayMessageActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private List<ManejadorFigura> manejadorFiguras;
-    private ArrayList<ManejadorErrores> manejadorErrores;
-    private ArrayList<ReportOcurrencias> reportOcurrencias;
+    private ArrayList<ManejadorErrores> manejadorErrores = new ArrayList<>();
+    private ArrayList<ReportOcurrencias> reportOcurrencias=new ArrayList<>();
+    private ArrayList<ReportTipoCant> reportFiguras = new ArrayList<>();
+    private ArrayList<ReportTipoCant> reportColores = new ArrayList<>();
+    private int limit1 = 0;
 
-    private HomeFragment fragment;
     private FragmentTransaction fragmentTransaction;
     private Bundle parametro;
     private DrawerLayout drawer;
+
+    //variables listados
+    int animLinea = 0;
+    int animCurva= 0;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,11 +74,20 @@ public class DisplayMessageActivity extends AppCompatActivity {
             StringReader reader = new StringReader(message);
             LexicoGraph lexico = new LexicoGraph(reader);
             parser parser = new parser(lexico);
-            parser.parse();
+            try {
+                parser.parse();
+            }catch (Exception e){
+                System.out.println("error en el parser " + e.getMessage());
+            }
             //obtenemos la lista
             manejadorFiguras = parser.getManejadorFigura();
-            reportOcurrencias= (ArrayList<ReportOcurrencias>) parser.getReportOcurrencia();
             manejadorErrores = (ArrayList<ManejadorErrores>) parser.getManejadorErrores();
+            //evaluamos que no hay errores para hacer los reportes
+            if (manejadorErrores.size()==0 && manejadorErrores != null){
+                reportOcurrencias= (ArrayList<ReportOcurrencias>) parser.getReportOcurrencia();
+                extraerListas();
+            }
+            System.out.println("hola " + manejadorErrores.size());
         }catch(Exception e){
             System.out.println("error : " + e.getMessage());
         }
@@ -82,25 +103,45 @@ public class DisplayMessageActivity extends AppCompatActivity {
                     item.setChecked(true);
                 }
                 drawer.closeDrawers();
-                fragment = new HomeFragment();
                 parametro = new Bundle();
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 switch (item.getItemId()){
-                    case R.id.report_ocurrencias:
+                    case R.id.report_ocurrencias: {
                         Intent intent = new Intent(DisplayMessageActivity.this, VistaOcurrencias.class);
-                        intent.putExtra("lista",reportOcurrencias);
+                        intent.putExtra("lista", reportOcurrencias);
                         startActivity(intent);
                         return true;
-                    case R.id.report_animaciones:
-
+                    }
+                    case R.id.report_animaciones: {
+                        Intent intent = new Intent(DisplayMessageActivity.this, VistaAnimaciones.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("linea", String.valueOf(animLinea));
+                        bundle.putString("curva",String.valueOf(animCurva));
+                        intent.putExtras(bundle);
+                        startActivity(intent);
                         return true;
-                    default:
-                        parametro.putString("defecto", "opcion por defecto");
-                        fragment.setArguments(parametro);
-                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.voidActivityDisplay,fragment);
-                        fragmentTransaction.commit();
+                    }
+                    case R.id.nav_Errores:{
+                        Intent intent = new Intent(DisplayMessageActivity.this, VistaErrores.class);
+                        intent.putExtra("lista",manejadorErrores);
+                        startActivity(intent);
                         return true;
+                    }
+                    case R.id.nav_colores:{
+                        Intent intent = new Intent(DisplayMessageActivity.this, VistaColores.class);
+                        intent.putExtra("lista",reportColores);
+                        startActivity(intent);
+                        return true;
+                    }
+                    case R.id.nav_figuras:{
+                        Intent intent = new Intent(DisplayMessageActivity.this, VistaFiguras.class);
+                        intent.putExtra("lista",reportFiguras);
+                        startActivity(intent);
+                        return true;
+                    }
+                    default: {
+                        return true;
+                    }
                 }
             }
         });
@@ -121,21 +162,40 @@ public class DisplayMessageActivity extends AppCompatActivity {
         //drawer.setDrawerListener(actionBarDrawerToggle);
         drawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-
-
-
-
-        //empezamos a dibujar las figuras
-        ConstraintLayout layout1 = (ConstraintLayout) findViewById(R.id.voidActivityDisplay);
-        PaintFigures fondo = new PaintFigures(this, manejadorFiguras);
-        layout1.addView(fondo);
+        if (manejadorErrores.size() == 0 && manejadorErrores != null) {
+            //empezamos a dibujar las figuras
+            ConstraintLayout layout1 = (ConstraintLayout) findViewById(R.id.voidActivityDisplay);
+            PaintFigures fondo = new PaintFigures(this, manejadorFiguras);
+            layout1.addView(fondo);
+            if (limit1 == 0){
+                reportColores = fondo.getReportColores();
+                reportFiguras = fondo.getReportFiguras();
+                limit1++;
+            }
+        }else{
+            ConstraintLayout layout1 = (ConstraintLayout) findViewById(R.id.voidActivityDisplay);
+            layout1.addView(cambiarDatos("ERROR DE COMPILACION:\nREVISE EL APARTADO DE REPORTES DE ERRORES"));
+        }
     }
 
+    public void extraerListas(){
+        for (ManejadorFigura manejadorFigura: manejadorFiguras){
+            if (manejadorFigura.getAnimacion() != null){
+                if (manejadorFigura.getAnimacion().getTipo().equalsIgnoreCase("linea")){
+                    animLinea++;
+                }else{
+                    animCurva++;
+                }
+            }
+        }
+    }
 
-    /*@Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment1);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
-    }*/
+    private TextView cambiarDatos(String dato){
+        TextView txtOperador = new TextView(this);
+        txtOperador.setText(dato);
+        txtOperador.setGravity(Gravity.CENTER);
+        txtOperador.setPadding(10,10,10,10);
+        txtOperador.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+        return txtOperador;
+    }
 }

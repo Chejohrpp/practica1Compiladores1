@@ -29,7 +29,7 @@ public class VistaOcurrencias extends AppCompatActivity {
     private TableRow fila;
     private TextView txtOperador,txtLinea,txtColum,txtOcurr;
     private TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,TableRow.LayoutParams.WRAP_CONTENT);
-    private String[] titulos = {"operador","linea","columna","ocurrencia"};
+    private String[] titulos = {"OPERADOR","LINEA","COLUMNA","OCURRENCIA"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

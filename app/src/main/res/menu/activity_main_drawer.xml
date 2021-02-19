@@ -5,15 +5,15 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
+            android:id="@+id/nav_colores"
             android:icon="?attr/actionModePasteDrawable"
             android:checked="false"
-            android:title="@string/menu_home" />
+            android:title="@string/colores_usados" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_figuras"
             android:icon="?attr/actionModePasteDrawable"
             android:checked="false"
-            android:title="@string/menu_gallery" />
+            android:title="@string/figuras_usadas" />
         <item
             android:id="@+id/report_animaciones"
             android:icon="?attr/actionModePasteDrawable"
@@ -25,9 +25,9 @@
             android:checked="false"
             android:title="@string/report_ocurrencias" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_Errores"
             android:icon="?attr/actionModePasteDrawable"
             android:checked="false"
-            android:title="@string/menu_slideshow" />
+            android:title="@string/errores" />
     </group>
 </menu>
