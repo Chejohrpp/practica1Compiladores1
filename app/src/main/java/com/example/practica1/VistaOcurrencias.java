@@ -1,26 +1,17 @@
 package com.example.practica1;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.example.practica1.source.TablaDinamica;
 import com.example.practica1.source.reportes.ReportOcurrencias;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class VistaOcurrencias extends AppCompatActivity {
 

@@ -20,17 +20,21 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 
 import com.example.practica1.source.LexicoGraph;
 import com.example.practica1.source.ManejadorFigura;
+import com.example.practica1.source.objetos.Animacion;
 import com.example.practica1.source.parser;
 import com.example.practica1.source.reportes.ManejadorErrores;
 import com.example.practica1.source.reportes.ReportOcurrencias;
 import com.example.practica1.source.reportes.ReportTipoCant;
+import com.example.practica1.ui.Animar;
 import com.example.practica1.ui.PaintFigures;
 import com.google.android.material.navigation.NavigationView;
 
@@ -38,6 +42,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
 
 public class DisplayMessageActivity extends AppCompatActivity {
 
@@ -47,7 +52,6 @@ public class DisplayMessageActivity extends AppCompatActivity {
     private ArrayList<ReportOcurrencias> reportOcurrencias=new ArrayList<>();
     private ArrayList<ReportTipoCant> reportFiguras = new ArrayList<>();
     private ArrayList<ReportTipoCant> reportColores = new ArrayList<>();
-    private int limit1 = 0;
 
     private FragmentTransaction fragmentTransaction;
     private Bundle parametro;
@@ -56,6 +60,9 @@ public class DisplayMessageActivity extends AppCompatActivity {
     //variables listados
     int animLinea = 0;
     int animCurva= 0;
+
+    int cantAnimacion=0;
+    ArrayList<Animacion> animacions = new ArrayList<>();
 
 
 
@@ -80,6 +87,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
                 System.out.println("error en el parser " + e.getMessage());
             }
             //obtenemos la lista
+
             manejadorFiguras = parser.getManejadorFigura();
             manejadorErrores = (ArrayList<ManejadorErrores>) parser.getManejadorErrores();
             //evaluamos que no hay errores para hacer los reportes
@@ -87,7 +95,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
                 reportOcurrencias= (ArrayList<ReportOcurrencias>) parser.getReportOcurrencia();
                 extraerListas();
             }
-            System.out.println("hola " + manejadorErrores.size());
+            //System.out.println("hola " + manejadorErrores.size());
         }catch(Exception e){
             System.out.println("error : " + e.getMessage());
         }
@@ -166,11 +174,12 @@ public class DisplayMessageActivity extends AppCompatActivity {
             //empezamos a dibujar las figuras
             ConstraintLayout layout1 = (ConstraintLayout) findViewById(R.id.voidActivityDisplay);
             PaintFigures fondo = new PaintFigures(this, manejadorFiguras);
+            fondo.setId(R.id.fondo);
             layout1.addView(fondo);
-            if (limit1 == 0){
-                reportColores = fondo.getReportColores();
-                reportFiguras = fondo.getReportFiguras();
-                limit1++;
+            reportColores = fondo.getReportColores();
+            reportFiguras = fondo.getReportFiguras();
+            if (cantAnimacion>0){
+                activarAnimacion();
             }
         }else{
             ConstraintLayout layout1 = (ConstraintLayout) findViewById(R.id.voidActivityDisplay);
@@ -179,12 +188,20 @@ public class DisplayMessageActivity extends AppCompatActivity {
     }
 
     public void extraerListas(){
+        int id = -1;
         for (ManejadorFigura manejadorFigura: manejadorFiguras){
+            id++;
             if (manejadorFigura.getAnimacion() != null){
                 if (manejadorFigura.getAnimacion().getTipo().equalsIgnoreCase("linea")){
                     animLinea++;
                 }else{
                     animCurva++;
+                }
+                if (id > 0){
+                    if (manejadorFiguras.get(id-1).getAnimacion() == null ){
+                        cantAnimacion++;
+                        animacions.add(new Animacion(manejadorFigura.getAnimacion().getDesX(),manejadorFigura.getAnimacion().getDesY(),manejadorFigura.getAnimacion().getTipo()));
+                    }
                 }
             }
         }
@@ -197,5 +214,42 @@ public class DisplayMessageActivity extends AppCompatActivity {
         txtOperador.setPadding(10,10,10,10);
         txtOperador.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
         return txtOperador;
+    }
+
+    private void activarAnimacion(){
+        LinearLayout linearLayout = findViewById(R.id.linearAnim);
+        linearLayout.addView(cambiarDatos("Cantidad de animaciones Posibles : "+ cantAnimacion));
+        Button button = new Button(this);
+        button.setText("Animar");
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    int id =0;
+                    public void run() {
+                        while (id < cantAnimacion) {
+                            try {
+                                //System.out.println("id: " + id);
+                                PaintFigures paintFigures = findViewById(R.id.fondo);
+                                String tipo = animacions.get(id).getTipo();
+                                float desX = (float) animacions.get(id).getDesX();
+                                float desY = (float) animacions.get(id).getDesY();
+                                Animar animar = new Animar(paintFigures,desX,desY,tipo,id);
+                                animar.setDuration(1000);
+                                paintFigures.startAnimation(animar);
+                                id++;
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }).start();
+            }
+        });
+        button.setPadding(10,10,10,10);
+        button.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+        button.setGravity(Gravity.CENTER);
+        linearLayout.addView(button);
     }
 }

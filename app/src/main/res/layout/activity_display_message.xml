@@ -10,4 +10,14 @@
     tools:showIn="@layout/app_bar_main"
 
 
-    />
+    >
+
+    <LinearLayout
+        android:id="@+id/linearAnim"
+        android:layout_width="330dp"
+        android:layout_height="68dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,4 +17,5 @@
     <string name="abrirDrawe">abrimos el drawer</string>
     <string name="cerrarDrawer">cerramos el drawer</string>
     <string name="report_ocurrencia_short">Ocurrencia de Operadores</string>
+    <item type="id" name="fondo"/>
 </resources>
