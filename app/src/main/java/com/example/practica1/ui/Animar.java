@@ -17,6 +17,7 @@ public class Animar extends Animation {
     private String tipo;
     private int index;
 
+
     public Animar(PaintFigures paintFigures,float newPosicionX,float newPosicionY, String tipo, int index) {
         this.paintFigures = paintFigures;
         this.oldPosicionX = paintFigures.getPosX(index);
@@ -40,6 +41,77 @@ public class Animar extends Animation {
             //actualizamos
             paintFigures.requestLayout();
         }else{
+            float desfase=0;
+            float angulo = (((float)(Math.PI) * interpolatedTime));
+            float radioX = ((newPosicionX - oldPosicionX)/2);
+            float radioY = ((newPosicionY - oldPosicionY)/2);
+            float radio = ((float)Math.hypot(radioX*2,radioY*2))/2;
+            float centroX = ((newPosicionX+oldPosicionX)/2);
+            float centroY = ((newPosicionY+oldPosicionY)/2);
+            double x = -radioX * Math.cos(angulo) + centroX;
+            double y = radioY * Math.sin(angulo) + centroY;
+
+            if (Math.acos((centroX-oldPosicionX)/radio) <= Math.acos((centroY-oldPosicionY)/radio) ){
+
+                if (radio != 0){
+                    desfase =(float) Math.acos((centroX-oldPosicionX)/radio);
+                    //System.out.println("hola");
+                    //System.out.println("radio: " + radio + "Y: "+ (centroY-oldPosicionY) );
+                }
+                if (radioX > 0){
+                    x = -radio * Math.cos(angulo+desfase) + centroX;
+                    y = -radio * Math.sin(angulo+desfase) + centroY;
+                }else{
+                    x = -radio * Math.cos(desfase + angulo) + centroX;
+                    y = radio * Math.sin( desfase +angulo) + centroY;
+                }
+            }
+            if(Math.abs((centroX-oldPosicionX)/radio) > Math.abs((centroY-oldPosicionY)/radio)  ){
+                if (radio != 0){
+                    desfase =(float) Math.acos((centroY-oldPosicionY)/radio);
+                    //System.out.println("radio: " + radio + "Y: "+ (centroY-oldPosicionY) );
+                }
+                 if (radioY>0){
+                     x = radio * Math.sin(angulo +desfase) + centroX;
+                     y = -radio * Math.cos(angulo +desfase) + centroY;
+                 }else{
+                     x = -radio * Math.sin(desfase+ angulo ) + centroX;
+                     y = -radio * Math.cos(desfase + angulo) + centroY;
+                 }
+            }
+            //cuando solo hay que moverse en el eje y
+            if (radioX==0){
+                if (radio != 0){
+                    desfase =(float) Math.acos((centroY-oldPosicionY)/radio);
+                }
+                if (radioY>0){
+                    x = radio * Math.sin(angulo +desfase) + centroX;
+                    y = -radio * Math.cos(angulo +desfase) + centroY;
+                }else{
+                    x = -radio * Math.sin(desfase+ angulo ) + centroX;
+                    y = -radio * Math.cos(desfase + angulo) + centroY;
+                }
+            }
+            //cuando solo hay que moverse en el eje X
+            if (radioY==0){
+                if (radio != 0){
+                    desfase =(float) Math.acos((centroX-oldPosicionX)/radio);
+                }
+                if (radioX > 0){
+                    x = -radio * Math.cos(angulo+desfase) + centroX;
+                    y = radio * Math.sin(angulo+desfase) + centroY;
+                }else{
+                    x = -radio * Math.cos(desfase + angulo) + centroX;
+                    y = -radio * Math.sin( desfase +angulo) + centroY;
+                }
+            }
+            /*System.out.println("posicion x:" + x + "posicion y:" + y);
+            System.out.println("desfase: " + desfase);
+            System.out.println("desfase en x: " + (centroY-oldPosicionY)/radio);
+            System.out.println("desfase en y: " + (centroX-oldPosicionX)/radio);*/
+            paintFigures.setPosX((float)x,index);
+            paintFigures.setPosY((float)y,index);
+            paintFigures.requestLayout();
 
         }
     }

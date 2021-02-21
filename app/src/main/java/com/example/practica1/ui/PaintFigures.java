@@ -98,7 +98,7 @@ public class PaintFigures extends View {
                 paint.setColor(theColor(figura.getLinea().getColor()));
                 if (manejadorFiguras.size() > indexFigura+1 && manejadorFiguras.get(indexFigura+1).getAnimacion() != null){
                     float posx = (float) figura.getLinea().getPosX();
-                    float posy = (float) figura.getLinea().getPosX();
+                    float posy = (float) figura.getLinea().getPosY();
                     if (add == true){
                         posXY.add(new MoveAnimaciones(posx,posy));
                     }
@@ -123,7 +123,7 @@ public class PaintFigures extends View {
                 try {
                     if (manejadorFiguras.size() > indexFigura+1 && manejadorFiguras.get(indexFigura+1).getAnimacion() != null){
                         float posx = (float) figura.getPoligono().getPosX();
-                        float posy = (float) figura.getPoligono().getPosX();
+                        float posy = (float) figura.getPoligono().getPosY();
                         if (add == true){
                             posXY.add(new MoveAnimaciones(posx,posy));
                         }
