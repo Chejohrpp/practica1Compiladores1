@@ -1,0 +1,153 @@
+package com.example.practica1.source;
+import java_cup.runtime.*;
+import com.example.practica1.source.sym.*;
+import com.example.practica1.source.objetos.*;
+import java.util.ArrayList;
+import java.util.List;
+import com.example.practica1.source.reportes.*;
+import java.text.DecimalFormat;
+
+parser code{:
+
+	private int id =0;
+	private List<ManejadorFigura> manejadorFigura;
+	private List<ManejadorErrores>manejadorError;
+	private DecimalFormat df = new DecimalFormat("#.00");
+	private List<ReportOcurrencias>reportOcu;
+
+	public parser(LexicoGraph lex){
+		super(lex);
+		this.manejadorFigura = new ArrayList();
+		this.manejadorError = new ArrayList();
+		this.reportOcu = new ArrayList();
+	}
+
+	public void syntax_error(Symbol cur_token){
+		System.out.println("Error sintactico en la linea " + cur_token.left + "  y Columna: " + cur_token.right +" token: " +  symbl_name_from_id(cur_token.sym));
+		if (symbl_name_from_id(cur_token.sym).equals("ERROR") ) {
+			System.out.println(cur_token.value);
+			manejadorError.add(new ManejadorErrores((String)cur_token.value,cur_token.left,cur_token.right,"Lexico","Simbolo no perteneciente al lenguaje"));
+		}else{
+			manejadorError.add(new ManejadorErrores(symbl_name_from_id(cur_token.sym),cur_token.left,cur_token.right,"sintactico","No perteneciente a ninguna estructura valida"));
+		}
+
+	}
+	public void report_fatal_error(String message, Object info){
+		System.out.println("error fatal no recuperable: " + message + "objeto: " + info);
+	}
+	private Double conDob(String s){
+		return Double.parseDouble(s);
+	}
+	public List getReportOcurrencia(){
+		return reportOcu;
+	}
+	public List getManejadorFigura(){
+		return manejadorFigura;
+	}
+	public List getManejadorErrores(){
+    		return manejadorError;
+    	}
+	private String[] addMF(Object var){
+		String s =(String)var;
+		String[] ps=s.split("\\|");		
+		id++;
+		return ps;
+	}
+	private void addCirculo(Object var){		
+		String[] ps = addMF(var);
+		manejadorFigura.add(new ManejadorFigura(id,new Circulo(conDob(ps[0]),conDob(ps[1]),conDob(ps[2]),ps[3]))); 
+	}
+	private void addRect(Object var){		
+		String[] ps = addMF(var);
+		manejadorFigura.add(new ManejadorFigura(id,new Rectangulo(conDob(ps[0]),conDob(ps[1]),conDob(ps[2]),conDob(ps[3]),ps[4]))); 
+	}
+	private void addLinea(Object var){		
+		String[] ps = addMF(var);
+		manejadorFigura.add(new ManejadorFigura(id,new Linea(conDob(ps[0]),conDob(ps[1]),conDob(ps[2]),conDob(ps[3]),ps[4]))); 
+	}
+	private void addCPol(Object var){		
+		String[] ps = addMF(var);
+		manejadorFigura.add(new ManejadorFigura(id,new Poligono(conDob(ps[0]),conDob(ps[1]),conDob(ps[2]),conDob(ps[3]),conDob(ps[4]),ps[5]))); 
+	}
+
+	private void addAnim(Object var){		
+		String[] ps = addMF(var);
+		manejadorFigura.add(new ManejadorFigura(id,new Animacion(conDob(ps[0]),conDob(ps[1]),ps[2]))); 
+	}
+	private void addCuadrado(Object var){
+    		String[] ps = addMF(var);
+    		manejadorFigura.add(new ManejadorFigura(id,new Cuadrado(conDob(ps[0]),conDob(ps[1]),conDob(ps[2]),ps[3])));
+    	}
+:}
+
+terminal GRAFICAR,LINEA,CURVA,ANIMAR,OBJETO,ANTERIOR;
+terminal Token SUMA,RESTA,MULT,DIV,PA1,PA2;
+terminal COMA,CIRCULO,RECTANGULO,POLIGONO,COLOR,ERROR,CUADRADO;
+terminal String NUMBER;
+
+non terminal star,fig,obj,expr_all,anim,fin_pa,one_exp,two_exp,tip_an;
+non terminal Double expr;
+
+precedence left SUMA, RESTA;
+precedence left MULT,DIV;
+
+star ::= 	GRAFICAR fig star
+			|ANIMAR obj star
+			|GRAFICAR fig
+			|ANIMAR obj
+			;
+
+fig::=	 CIRCULO PA1 fin_pa:var PA2			{:addCirculo(var);:}
+		|RECTANGULO PA1 one_exp:var PA2		{:addRect(var);:}
+		|POLIGONO PA1 two_exp:var PA2		{:addCPol(var);:}
+		|LINEA PA1 one_exp:var PA2			{:addLinea(var);:}
+		|CUADRADO PA1 fin_pa:var PA2        {:addCuadrado(var);:}
+		|error
+		;
+
+obj::=	OBJETO ANTERIOR PA1 anim:var PA2	{:addAnim(var);:}
+		|error
+		;
+
+fin_pa::=	expr_all:e COMA expr_all:e1 COMA expr_all:e2 COMA COLOR:cl	{: RESULT = e + "|"+ e1 +"|" + e2 +"|" + cl ;:}
+			|error
+			;
+
+one_exp::=	expr_all:e COMA fin_pa:e1									{: RESULT = e + "|"+ e1 ;:}
+			|error
+			;
+
+two_exp::=	expr_all:e COMA expr_all:e1 COMA fin_pa:e2				{: RESULT = e + "|"+ e1 +"|" + e2 ;:}
+		|error
+		;
+
+expr_all ::= expr_all expr:e          {: RESULT = e; :}
+            | expr:e                  {: RESULT = e; :}
+			;
+
+expr      ::= expr:e1 SUMA:s  expr:e2         {:  
+											reportOcu.add(new ReportOcurrencias("SUMA",s.getLinea(),s.getColumna(), df.format(e1) + "+" + df.format(e2))) ;
+											RESULT = e1+e2;       :}
+             | expr:e1 RESTA:s expr:e2        {: reportOcu.add(new ReportOcurrencias("RESTA",s.getLinea(),s.getColumna(), df.format(e1) + "-" + df.format(e2))) ;
+             								RESULT = e1-e2;       :}
+             | expr:e1 MULT:s expr:e2       	{: reportOcu.add(new ReportOcurrencias("MULTIPLICACION",s.getLinea(),s.getColumna(), df.format(e1) + "*" + df.format(e2))) ; 
+             								RESULT = e1*e2;       :}
+             | expr:e1 DIV:s expr:e2        	{:reportOcu.add(new ReportOcurrencias("DIVISION",s.getLinea(),s.getColumna(), df.format(e1) + "/" + df.format(e2))) ; 
+             								RESULT = e1/e2;       :}
+             | RESTA:s expr:e                 {:reportOcu.add(new ReportOcurrencias("RESTA",s.getLinea(),s.getColumna(), "-" + df.format(e))) ; 
+             								RESULT = -e;          :}
+       		| PA1:s expr:e PA2:s1         	{:reportOcu.add(new ReportOcurrencias("PARENTESIS IZQUIERDO",s.getLinea(),s.getColumna(), "( " + df.format(e))) ;
+       										 reportOcu.add(new ReportOcurrencias("PARENTESIS DERECHO",s1.getLinea(),s1.getColumna(), df.format(e) + " )" )) ;
+       										RESULT = e;           :}
+       		| NUMBER:n	                    {: RESULT = Double.parseDouble(n);   :}
+       		|error
+             ;
+
+anim::=	expr_all:e COMA expr_all:e1 COMA tip_an:e2 {: RESULT = e + "|"+ e1 +"|" + e2 ;:}
+		|error
+		;
+
+tip_an::=CURVA								{: RESULT = "CURVA";           :}
+		|LINEA 								{: RESULT = "LINEA";           :}
+		|error
+		;
